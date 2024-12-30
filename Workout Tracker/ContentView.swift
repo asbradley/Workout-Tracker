@@ -7,6 +7,9 @@
 
 import SwiftUI
 import FirebaseAuth
+import GoogleSignIn
+import GoogleSignInSwift
+
 
 struct ContentView: View {
     @State private var email: String = ""
@@ -16,7 +19,7 @@ struct ContentView: View {
     @State private var navigateToProfile: Bool = false
     
     var body: some View {
-        NavigationStack {  // Changed from NavigationView to NavigationStack
+        NavigationStack { 
             ZStack {
                 LinearGradient(
                     gradient: Gradient(colors: [.red, .black]),
@@ -32,8 +35,38 @@ struct ContentView: View {
                         .fontWeight(.bold)
                         .padding(.top, 50)
                     
+                    
+                    
+                    
+                    
                     Button(action: {
                         // TODO: Add Google Sign-In action
+                        
+                        // THIS DOES NOT WORK NEEDS TO BE FIXED SOMEHOW
+                        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                              let rootViewController = windowScene.windows.first?.rootViewController else {
+                            print("No root view controller available.")
+                            return
+                        }
+
+                        GIDSignIn.sharedInstance.signIn(
+                            withPresenting: rootViewController
+                        ) { result, error in
+                            if let error = error {
+                                print("Error signing in: \(error.localizedDescription)")
+                                return
+                            }
+
+                            guard let user = result?.user else {
+                                print("No user found.")
+                                return
+                            }
+
+                            print("Signed in as: \(user.profile?.email ?? "No Email")")
+                        }
+                        
+  
+                        
                     }) {
                         HStack {
                             Image("Google Logo")
